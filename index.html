@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tez.x Launcher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #0d0f12;
+            color: #ffffff;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #13161c;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px 16px;
+            border-right: 1px solid #1f242d;
+            z-index: 10;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 8px;
+            margin-bottom: 30px;
+        }
+
+        .logo-area i {
+            font-size: 28px;
+            color: #ffaa00;
+            filter: drop-shadow(0 0 8px rgba(255, 170, 0, 0.4));
+        }
+
+        .logo-area h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #ffffff, #a0aab8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .nav-links li {
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-weight: 500;
+            color: #8c95a1;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links li:hover,
+        .nav-links li.active {
+            background: #1c212c;
+            color: #ffffff;
+        }
+
+        .nav-links li.active {
+            border-left: 4px solid #ffaa00;
+        }
+
+        /* User Profile Preview in Sidebar */
+        .user-profile-preview {
+            background: #181c24;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #1f242d;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .user-profile-preview:hover {
+            border-color: #323a4d;
+        }
+
+        .avatar-container {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #232833;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            max-width: 130px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-info span {
+            font-size: 11px;
+            color: #2ecc71;
+        }
+
+        /* Main Content Area */
+        .main-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0d0f12;
+            position: relative;
+        }
+
+        .content-section {
+            display: none;
+            flex-direction: column;
+            height: calc(100vh - 90px);
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-section.active {
+            display: flex;
+        }
+
+        h2.section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        /* Home Section */
+        .home-banner {
+            flex-grow: 1;
+            background: linear-gradient(180deg, rgba(13, 15, 18, 0.1) 0%, rgba(13, 15, 18, 0.95) 100%), url('https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?q=80&w=1600&auto=format&fit=crop') center/cover;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            border: 1px solid #1f242d;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .banner-content h3 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            color: #ffaa00;
+        }
+
+        .banner-content p {
+            color: #d0d5dd;
+            font-size: 15px;
+            margin-bottom: 20px;
+            max-width: 550px;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Bottom Bar with Tez.x Button */
+        .bottom-bar {
+            height: 90px;
+            background: #13161c;
+            border-top: 1px solid #1f242d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 10;
+        }
+
+        .version-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .version-selector select {
+            background: #1c212c;
+            color: #fff;
+            border: 1px solid #282e3d;
+            padding: 10px 16px;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .ignite-btn {
+            background: linear-gradient(135deg, #ffaa00, #ff8800);
+            color: #0d0f12;
+            border: none;
+            padding: 14px 48px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 20px rgba(255, 170, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .ignite-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 170, 0, 0.5);
+        }
+
+        .ignite-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Search & Grid for Modrinth Sections */
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex-grow: 1;
+            background: #161920;
+            border: 1px solid #1f242d;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #ffaa00;
+        }
+
+        .search-box button {
+            background: #1c212c;
+            border: 1px solid #282e3d;
+            color: #fff;
+            padding: 0 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .search-box button:hover {
+            background: #282e3d;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .card-item {
+            background: #151820;
+            border: 1px solid #1f242d;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            transition: 0.2s;
+        }
+
+        .card-item:hover {
+            border-color: #323a4d;
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: #232833;
+            object-fit: cover;
+        }
+
+        .card-title h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .card-title span {
+            font-size: 12px;
+            color: #8c95a1;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: #a0aab8;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .install-btn {
+            background: #1c212c;
+            border: 1px solid #282e3d;
+            color: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .install-btn:hover {
+            background: #ffaa00;
+            color: #0d0f12;
+            border-color: #ffaa00;
+        }
+
+        .install-btn.installed {
+            background: #2ecc71;
+            color: #fff;
+            border-color: #2ecc71;
+            pointer-events: none;
+        }
+
+        /* Settings & Profile Section Styling */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .settings-card {
+            background: #151820;
+            border: 1px solid #1f242d;
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .settings-card h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffaa00;
+        }
+
+        .setting-group {
+            margin-bottom: 16px;
+        }
+
+        .setting-group label {
+            display: block;
+            font-size: 13px;
+            color: #8c95a1;
+            margin-bottom: 6px;
+        }
+
+        .setting-group input,
+        .setting-group select {
+            width: 100%;
+            background: #1c212c;
+            border: 1px solid #282e3d;
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .setting-group input:focus,
+        .setting-group select:focus {
+            border-color: #ffaa00;
+        }
+
+        .skin-upload-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 20px;
+            border: 2px dashed #282e3d;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .skin-upload-box:hover {
+            border-color: #ffaa00;
+        }
+
+        .skin-preview-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            background: #1c212c;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #282e3d;
+        }
+
+        .skin-preview-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .save-settings-btn {
+            background: #ffaa00;
+            color: #0d0f12;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        .save-settings-btn:hover {
+            background: #ff8800;
+        }
+
+        /* Notification Toast */
+        .notification {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            background: #1c212c;
+            border: 1px solid #ffaa00;
+            padding: 14px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(150px);
+            opacity: 0;
+            transition: 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification i {
+            color: #ffaa00;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div>
+            <div class="logo-area">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <h1>Tez.x</h1>
+            </div>
+            <ul class="nav-links">
+                <li class="active" onclick="switchTab('home', this)"><i class="fa-solid fa-house"></i> Home</li>
+                <li onclick="switchTab('modpacks', this)"><i class="fa-solid fa-cubes"></i> Modpacks</li>
+                <li onclick="switchTab('mods', this)"><i class="fa-solid fa-puzzle-piece"></i> Mods</li>
+                <li onclick="switchTab('resourcepacks', this)"><i class="fa-solid fa-layer-group"></i> Resource Packs
+                </li>
+                <li onclick="switchTab('shaders', this)"><i class="fa-solid fa-wand-magic-sparkles"></i> Shaders</li>
+                <li onclick="switchTab('settings', this)"><i class="fa-solid fa-gear"></i> Settings & Profile</li>
+            </ul>
+        </div>
+
+        <div class="user-profile-preview"
+            onclick="switchTab('settings', document.querySelectorAll('.nav-links li')[5])">
+            <div class="avatar-container">
+                <img id="sidebarAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Soham" alt="Avatar">
+            </div>
+            <div class="user-info">
+                <h4 id="sidebarUsername">Soham</h4>
+                <span>Online</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- HOME SECTION -->
+        <div id="home" class="content-section active">
+            <h2 class="section-title">Dashboard</h2>
+            <div class="home-banner">
+                <div class="banner-content">
+                    <h3>Minecraft Java Edition</h3>
+                    <p>Ready to play. Hardware optimized automatically based on your PC specifications for maximum FPS.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODPACKS SECTION -->
+        <div id="modpacks" class="content-section">
+            <h2 class="section-title">Modrinth Modpacks</h2>
+            <div class="search-box">
+                <input type="text" id="modpackSearch" placeholder="Search modpacks (e.g. Better Minecraft, Fabric)...">
+                <button onclick="fetchModrinth('modpacks')"><i class="fa-solid fa-search"></i> Search</button>
+            </div>
+            <div class="items-grid" id="modpacksGrid">
+                <!-- Dynamically loaded from Modrinth API -->
+            </div>
+        </div>
+
+        <!-- MODS SECTION -->
+        <div id="mods" class="content-section">
+            <h2 class="section-title">Modrinth Mods</h2>
+            <div class="search-box">
+                <input type="text" id="modSearch" placeholder="Search mods (e.g. JEI, Sodium, Iris)...">
+                <button onclick="fetchModrinth('mods')"><i class="fa-solid fa-search"></i> Search</button>
+            </div>
+            <div class="items-grid" id="modsGrid">
+                <!-- Dynamically loaded from Modrinth API -->
+            </div>
+        </div>
+
+        <!-- RESOURCE PACKS SECTION -->
+        <div id="resourcepacks" class="content-section">
+            <h2 class="section-title">Modrinth Resource Packs</h2>
+            <div class="search-box">
+                <input type="text" id="resourcepackSearch"
+                    placeholder="Search resource packs (e.g. Bare Bones, Faithful)...">
+                <button onclick="fetchModrinth('resourcepacks')"><i class="fa-solid fa-search"></i> Search</button>
+            </div>
+            <div class="items-grid" id="resourcepacksGrid">
+                <!-- Dynamically loaded from Modrinth API -->
+            </div>
+        </div>
+
+        <!-- SHADERS SECTION -->
+        <div id="shaders" class="content-section">
+            <h2 class="section-title">Modrinth Shaders</h2>
+            <div class="search-box">
+                <input type="text" id="shaderSearch" placeholder="Search shaders (e.g. Complementary, BSL)...">
+                <button onclick="fetchModrinth('shaders')"><i class="fa-solid fa-search"></i> Search</button>
+            </div>
+            <div class="items-grid" id="shadersGrid">
+                <!-- Dynamically loaded from Modrinth API -->
+            </div>
+        </div>
+
+        <!-- SETTINGS & PROFILE SECTION -->
+        <div id="settings" class="content-section">
+            <h2 class="section-title">Settings & Profile</h2>
+            <div class="settings-grid">
+                <!-- Profile Card -->
+                <div class="settings-card">
+                    <h3><i class="fa-solid fa-user-pen"></i> Account Profile</h3>
+                    <div class="setting-group">
+                        <label>IGN / Profile Name</label>
+                        <input type="text" id="usernameInput" value="Soham">
+                    </div>
+                    <div class="setting-group">
+                        <label>Custom Skin (.png or Image File)</label>
+                        <div class="skin-upload-box" onclick="document.getElementById('skinFileInput').click()">
+                            <div class="skin-preview-large">
+                                <img id="skinPreviewImg" src="https://api.dicebear.com/7.x/bottts/svg?seed=Soham"
+                                    alt="Skin Preview">
+                            </div>
+                            <span style="font-size: 13px; color: #8c95a1;" id="uploadText">Click to upload skin
+                                image</span>
+                            <input type="file" id="skinFileInput" accept="image/*" style="display: none;"
+                                onchange="handleSkinUpload(event)">
+                        </div>
+                    </div>
+                    <button class="save-settings-btn" onclick="saveProfileSettings()">Save Profile</button>
+                </div>
+
+                <!-- Hardware Allocation Card -->
+                <div class="settings-card">
+                    <h3><i class="fa-solid fa-microchip"></i> PC Hardware Allocation</h3>
+                    <div class="setting-group">
+                        <label>Detected RAM: <span id="detectedRamLabel" style="color:#ffaa00;">8 GB</span></label>
+                        <label>RAM Allocation (Slider)</label>
+                        <input type="range" id="ramSlider" min="2" max="32" value="4" step="1"
+                            oninput="updateRamLabel(this.value)">
+                        <span id="allocatedRamText" style="font-size: 12px; color: #8c95a1;">Allocating 4 GB</span>
+                    </div>
+                    <div class="setting-group">
+                        <label>CPU Cores Allocation (<span id="detectedCpuLabel"
+                                style="color:#ffaa00;">Detecting...</span>)</label>
+                        <select id="cpuCoresSelect">
+                            <option value="auto">Auto (Optimal)</option>
+                        </select>
+                    </div>
+                    <button class="save-settings-btn" onclick="saveHardwareSettings()">Apply Hardware</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Launcher Bar -->
+        <div class="bottom-bar">
+            <div class="version-selector">
+                <i class="fa-solid fa-gamepad" style="color: #ffaa00;"></i>
+                <select id="mcVersionSelect">
+                    <option value="1.20.4">Release 1.20.4</option>
+                    <option value="1.20.1">Release 1.20.1 (Forge/Fabric)</option>
+                    <option value="1.19.4">Release 1.19.4</option>
+                    <option value="1.18.2">Release 1.18.2</option>
+                </select>
+            </div>
+
+            <button class="ignite-btn" onclick="launchGame()">
+                <i class="fa-solid fa-bolt"></i> Tez.x
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="notification" id="toastNotification">
+        <i class="fa-solid fa-circle-check" id="toastIcon"></i>
+        <div>
+            <h4 id="toastTitle" style="font-size: 14px; font-weight: 600;">Success</h4>
+            <p id="toastDesc" style="font-size: 12px; color: #a0aab8;">Action completed successfully.</p>
+        </div>
+    </div>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            if (element) element.classList.add('active');
+
+            if (tabId === 'modpacks' && document.getElementById('modpacksGrid').children.length === 0) {
+                fetchModrinth('modpacks');
+            } else if (tabId === 'mods' && document.getElementById('modsGrid').children.length === 0) {
+                fetchModrinth('mods');
+            } else if (tabId === 'resourcepacks' && document.getElementById('resourcepacksGrid').children.length === 0) {
+                fetchModrinth('resourcepacks');
+            } else if (tabId === 'shaders' && document.getElementById('shadersGrid').children.length === 0) {
+                fetchModrinth('shaders');
+            }
+        }
+
+        // Auto PC Hardware Detection
+        window.addEventListener('DOMContentLoaded', () => {
+            const logicalCores = navigator.hardwareConcurrency || 4;
+            document.getElementById('detectedCpuLabel').innerText = `${logicalCores} Cores Detected`;
+
+            const cpuSelect = document.getElementById('cpuCoresSelect');
+            cpuSelect.innerHTML = '<option value="auto">Auto (Optimal)</option>';
+            for (let i = 1; i <= logicalCores; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `${i} Core${i > 1 ? 's' : ''}${i === logicalCores ? ' (Max Performance)' : ''}`;
+                if (i === Math.max(1, logicalCores - 1) || (logicalCores === 1 && i === 1)) {
+                    opt.selected = true;
+                }
+                cpuSelect.appendChild(opt);
+            }
+
+            const estimatedDeviceMemory = navigator.deviceMemory || 8;
+            document.getElementById('detectedRamLabel').innerText = `${estimatedDeviceMemory} GB`;
+
+            const recommendedRam = Math.max(2, Math.floor(estimatedDeviceMemory * 0.5));
+            document.getElementById('ramSlider').max = estimatedDeviceMemory;
+            document.getElementById('ramSlider').value = recommendedRam;
+            document.getElementById('allocatedRamText').innerText = `Allocating ${recommendedRam} GB (Recommended)`;
+        });
+
+        function updateRamLabel(val) {
+            document.getElementById('allocatedRamText').innerText = `Allocating ${val} GB`;
+        }
+
+        // Profile & Skin Management
+        function handleSkinUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('skinPreviewImg').src = e.target.result;
+                    document.getElementById('sidebarAvatar').src = e.target.result;
+                    document.getElementById('uploadText').innerText = file.name;
+                    showToast('Skin Loaded', 'Custom skin preview updated successfully.');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfileSettings() {
+            const name = document.getElementById('usernameInput').value;
+            if (name.trim() === '') {
+                alert('Please enter a valid profile name.');
+                return;
+            }
+            document.getElementById('sidebarUsername').innerText = name;
+            showToast('Profile Saved', `Welcome back, ${name}!`);
+        }
+
+        function saveHardwareSettings() {
+            const ram = document.getElementById('ramSlider').value;
+            const cores = document.getElementById('cpuCoresSelect').value;
+            showToast('Hardware Optimized', `Successfully allocated ${ram} GB RAM & ${cores === 'auto' ? 'Auto Optimal' : cores + ' Cores'}.`);
+        }
+
+        // Modrinth API Integration
+        async function fetchModrinth(type) {
+            let gridId, facetType, searchInputId;
+            if (type === 'modpacks') { gridId = 'modpacksGrid'; facetType = 'modpack'; searchInputId = 'modpackSearch'; }
+            else if (type === 'mods') { gridId = 'modsGrid'; facetType = 'mod'; searchInputId = 'modSearch'; }
+            else if (type === 'resourcepacks') { gridId = 'resourcepacksGrid'; facetType = 'resourcepack'; searchInputId = 'resourcepackSearch'; }
+            else if (type === 'shaders') { gridId = 'shadersGrid'; facetType = 'shader'; searchInputId = 'shaderSearch'; }
+
+            const grid = document.getElementById(gridId);
+            grid.innerHTML = '<div style="color:#8c95a1; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Connecting to Modrinth...</div>';
+
+            try {
+                const query = document.getElementById(searchInputId).value;
+                const url = `https://api.modrinth.com/v2/search?query=${encodeURIComponent(query)}&facets=[["project_type:${facetType}"]]&limit=12`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                grid.innerHTML = '';
+                if (data.hits.length === 0) {
+                    grid.innerHTML = '<div style="color:#8c95a1; padding: 20px;">No results found on Modrinth.</div>';
+                    return;
+                }
+
+                data.hits.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card-item';
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <img class="card-icon" src="${item.icon_url || 'https://via.placeholder.com/48'}" alt="Icon">
+                            <div class="card-title">
+                                <h4>${item.title}</h4>
+                                <span>By ${item.author}</span>
+                            </div>
+                        </div>
+                        <div class="card-desc">${item.description}</div>
+                        <button class="install-btn" onclick="installModrinthItem(this, '${item.title.replace(/'/g, "\\'")}', '${facetType}')">
+                            <i class="fa-solid fa-download"></i> Install to Minecraft
+                        </button>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (err) {
+                grid.innerHTML = '<div style="color:#e74c3c; padding: 20px;">Failed to connect to Modrinth API. Check your internet connection.</div>';
+            }
+        }
+
+        function installModrinthItem(btn, itemName, type) {
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Installing...';
+            btn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Installed';
+                btn.classList.add('installed');
+                showToast('Successfully Installed!', `"${itemName}" was successfully added to your Minecraft directory.`);
+            }, 1200);
+        }
+
+        // Game Launch Action (Tez.x)
+        function launchGame() {
+            const btn = document.querySelector('.ignite-btn');
+            const version = document.getElementById('mcVersionSelect').value;
+            const username = document.getElementById('sidebarUsername').innerText;
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> LAUNCHING...';
+            btn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                showToast('Tez.x Initiated!', `Launching Minecraft ${version} as ${username}...`);
+                btn.innerHTML = '<i class="fa-solid fa-gamepad"></i> RUNNING';
+                btn.style.background = '#2ecc71';
+                btn.style.color = '#fff';
+            }, 1500);
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Tez.x';
+                btn.style.background = 'linear-gradient(135deg, #ffaa00, #ff8800)';
+                btn.style.color = '#0d0f12';
+                btn.style.pointerEvents = 'auto';
+            }, 5000);
+        }
+
+        // Toast Notification System
+        function showToast(title, desc) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastDesc').innerText = desc;
+
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+    </script>
+</body>
+
+</html>
